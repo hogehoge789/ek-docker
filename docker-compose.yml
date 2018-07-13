@@ -1,25 +1,19 @@
 ---
-version: '3'
+version: '2'
 services:
   elasticsearch: 
-   image: docker.elastic.co/elasticsearch/elasticsearch:6.3.1
-   environment:
-     - bootstrap.memory_lock=true
-     - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-   deploy:
-    resources:
-      limits:
-        memory: 1024M
-   ports:
-     - "9200:9200"
-   volumes:
-     - /usr/share/elasticsearch/data
-
+    build: es
+    ports:
+      - 9200:9200
+    ulimits:
+      notile:
+         soft: 65536
+         hard: 65536
 
   kibana:
-   image: docker.elastic.co/kibana/kibana:6.3.1
-   environment:
-    - bootstrap.memory_lock=true
-    - ELASTICSEARCH_URL=https://elasticsearch:9200/
+   build: kibana
    ports:
-     - "5601:5601"
+     - 5601:5601
+   depends_on:
+     - es
+
